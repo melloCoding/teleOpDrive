@@ -15,45 +15,15 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 @TeleOp(name = "TeleOpMain", group = "Drive")
 public class TeleOpMain extends LinearOpMode {
 
-    //Power Constant
-    private static final double powerConstant = .51;
-    double voltage = 0;
     double speed = 1.5;
-    //battery Constant
-    double batteryConst = 13.5;
-    long debounceInterval = 100;
-    //variables for claw states
-    double clawOpen = 0.7;
-    int clawClose = 0;
-    int clawReset = 1;
-    int armStartPos = -2; //The value for the arm rotation position to move it back to the start.
-    int armMiddlePos = -330; //The value for the arm rotation position to move it to straight up and down
-    int armBottomPos = -760; //The value for the arm rotation position to move it to pick things up off the floor
-    int clawHeightBottom = 0;
-    int clawHeightMid = 3312;
-    int clawHeightHigh = 7312;
     double stdSpeedMulti = 1.5;
     double slowSpeedMulti = 0.5;
-    double wristLoc = 1;
-    double armLoc = 0;
+
     //Drive Wheels
     private DcMotor FLMoto;
     private DcMotor FRMoto;
     private DcMotor BLMoto;
     private DcMotor BRMoto;
-    //arm
-    private DcMotor arm;
-    private DcMotor string;
-    private Servo claw;
-    private Servo wrist;
-    private Servo Finger;
-    private CRServo tapeServo;
-    private DcMotor tapeMoto;
-    private DcMotor tapeRoto;
-    //voltage sensor
-    private VoltageSensor VoltSens;
-    // ColorSensor/Distande Sensor sampleSen;
-    private DistanceSensor distance;
 
   /*
   Where the motors are plugged into
@@ -63,18 +33,9 @@ public class TeleOpMain extends LinearOpMode {
   FLMoto - Motor Port 2
   FRMoto - Motor Port 3
 
-  Expansion Hub:
-  string - Motor Port 1
-  arm - Motor Port 2
-  wrist - Servo Port 1
-  claw - Servo Port 0
-  */
+*/
 
-    //BlinkinLEDs
-    //private RevBlinkinLedDriver blinkinLedDriver;
-    //private RevBlinkinLedDriver.BlinkinPattern BasePattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-    //private RevBlinkinLedDriver.BlinkinPattern StopPattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-    private NormalizedColorSensor color;
+
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -102,14 +63,6 @@ public class TeleOpMain extends LinearOpMode {
         BRMoto = hardwareMap.dcMotor.get("FRMoto");
 
 
-        // Map Sensors
-        distance = hardwareMap.get(DistanceSensor.class, "colorRange");
-        color = hardwareMap.get(NormalizedColorSensor.class, "colorRange");
-
-
-        //BlinkinLEDs
-        //blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkinLed");
-        //blinkinLedDriver.setPattern(BasePattern);
 
         // Once per loop, we will update this hsvValues array. The first element (0) will contain the
         // hue, the second element (1) will contain the saturation, and the third element (2) will
@@ -154,11 +107,10 @@ public class TeleOpMain extends LinearOpMode {
 
         // If possible, turn the light on in the beginning (it might already be on anyway,
         // we just make sure it is if we can).
-        if (color instanceof SwitchableLight) {
-            ((SwitchableLight) color).enableLight(true);
-        }
 
         //The waitForStart() function will wait for the start button will begin
+        //DONT WRITE ANY CODE AFTER THE WAIT FOR START UNTIL THE "while (opModIsActive())"
+        //THIS WILL CAUSE PROBLEMS WHEN GOING THROUGH INSPECTION
         waitForStart();
 
         //******************************************//
@@ -170,47 +122,6 @@ public class TeleOpMain extends LinearOpMode {
             //driver hub													//
             //**************************************************************//
             telemetry.addData("Status", "opModeIsActive");
-
-            //comented as the are unneeded for usual oporation
-	  /*
-		telemetry.addData("Arm Rotation:", arm.getCurrentPosition());
-		telemetry.addData("Arm Height:", string.getCurrentPosition());
-		*/
-
-	  /*
-		// color sensor info
-		// Get the normalized colors from the sensor
-	  NormalizedRGBA colors = color.getNormalizedColors();
-	*/
-
-            /* Use telemetry to display feedback on the driver station. We show the red, green, and blue
-             * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent
-             * HSV (hue, saturation and value) values. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-             * for an explanation of HSV color. */
-
-            // Update the hsvValues array by passing it to Color.colorToHSV()
-	  /*
-	  Color.colorToHSV(colors.toColor(), hsvValues);
-
-	  telemetry.addLine()
-			  .addData("Red", "%.3f", colors.red)
-			  .addData("Green", "%.3f", colors.green)
-			  .addData("Blue", "%.3f", colors.blue);
-	  telemetry.addLine()
-			  .addData("Hue", "%.3f", hsvValues[0])
-			  .addData("Saturation", "%.3f", hsvValues[1])
-			  .addData("Value", "%.3f", hsvValues[2]);
-	  telemetry.addData("Alpha", "%.3f", colors.alpha);
-
-		*/
-            // generic DistanceSensor methods.
-            //comented as the are unneeded for usual oporation
-            // telemetry.addData("deviceName", distance.getDeviceName() );
-            // telemetry.addData("range", String.format("%.01f mm", distance.getDistance(DistanceUnit.MM)));
-            // telemetry.addData("range", String.format("%.01f cm", distance.getDistance(DistanceUnit.CM)));
-            // telemetry.addData("range", String.format("%.01f m", distance.getDistance(DistanceUnit.METER)));
-            // telemetry.addData("range", String.format("%.01f in", distance.getDistance(DistanceUnit.INCH)));
-
             telemetry.update();
 
             //Gamepad1
@@ -224,8 +135,6 @@ public class TeleOpMain extends LinearOpMode {
             }
 
             //regular drive controls
-            //sets the drive power to gamepad1 left_stick_y for the left drive train
-            //and gamepad1 right_stick_y for the right side drive train then it sets it
             //all to be multiplied by the speed modifier
             FRMoto.setPower(gamepad1.right_stick_y * speed);
             FLMoto.setPower(gamepad1.left_stick_y * speed);
@@ -244,18 +153,11 @@ public class TeleOpMain extends LinearOpMode {
             BRMoto.setPower(-gamepad1.left_trigger);
             BLMoto.setPower(-gamepad1.left_trigger);
         }
-
+        //NO DRIVE CODE OUT SIDE OF THE OPMODEACTIVE LOOP WILL CAUSE PROBLEMS IN INSPECTION
     }
 
     protected enum DisplayKind {
         MANUAL,
         AUTO,
     }
-  /*
-  void motorToPosition(namespace selectMotor, float setMotorPower, float motorTargetPositon){
-	  selectMotor.setTargetPosition(motorTargetPositon);
-	  selectMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-	  selectMotor.setPower(setMotorPower);
-	}
-	*/
 }
