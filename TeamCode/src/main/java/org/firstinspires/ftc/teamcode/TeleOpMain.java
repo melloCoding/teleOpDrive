@@ -1,6 +1,5 @@
 //Import required librarys
 package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -32,10 +31,7 @@ public class TeleOpMain extends LinearOpMode {
   BLMoto - Motor Port 1
   FLMoto - Motor Port 2
   FRMoto - Motor Port 3
-
 */
-
-
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -62,16 +58,6 @@ public class TeleOpMain extends LinearOpMode {
         BLMoto = hardwareMap.dcMotor.get("BLMoto");
         BRMoto = hardwareMap.dcMotor.get("FRMoto");
 
-
-
-        // Once per loop, we will update this hsvValues array. The first element (0) will contain the
-        // hue, the second element (1) will contain the saturation, and the third element (2) will
-        // contain the value. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-        // for an explanation of HSV color.
-
-        float[] hsvValues = {0F, 0F, 0F};
-
-        final float[] values = hsvValues;
 
         double contPower = 0.0;
 
@@ -136,22 +122,22 @@ public class TeleOpMain extends LinearOpMode {
 
             //regular drive controls
             //all to be multiplied by the speed modifier
-            FRMoto.setPower(gamepad1.right_stick_y * speed);
-            FLMoto.setPower(gamepad1.left_stick_y * speed);
-            BRMoto.setPower(gamepad1.right_stick_y * speed);
-            BLMoto.setPower(gamepad1.left_stick_y * speed);
+            FRMoto.setPower(gamepad1.right_stick_y * 1.5);
+            FLMoto.setPower(gamepad1.left_stick_y * 1.5);
+            BRMoto.setPower(gamepad1.right_stick_y * 1.5);
+            BLMoto.setPower(gamepad1.left_stick_y * 1.5);
 
             //Strafe Right using gamepad1 right_trigger
-            FRMoto.setPower(-gamepad1.right_trigger);
-            FLMoto.setPower(-gamepad1.right_trigger);
-            BRMoto.setPower(gamepad1.right_trigger);
-            BLMoto.setPower(gamepad1.right_trigger);
+            FRMoto.setPower(-gamepad1.right_trigger * 1.5);
+            FLMoto.setPower(-gamepad1.right_trigger * 1.5);
+            BRMoto.setPower(gamepad1.right_trigger * 1.5);
+            BLMoto.setPower(gamepad1.right_trigger * 1.5);
 
             // Strafe Left using gamepad1 left_trigger
-            FRMoto.setPower(gamepad1.left_trigger);
-            FLMoto.setPower(gamepad1.left_trigger);
-            BRMoto.setPower(-gamepad1.left_trigger);
-            BLMoto.setPower(-gamepad1.left_trigger);
+            FRMoto.setPower(gamepad1.left_trigger * 1.5);
+            FLMoto.setPower(gamepad1.left_trigger * 1.5);
+            BRMoto.setPower(-gamepad1.left_trigger * 1.5);
+            BLMoto.setPower(-gamepad1.left_trigger * 1.5);
         }
         //NO DRIVE CODE OUT SIDE OF THE OPMODEACTIVE LOOP WILL CAUSE PROBLEMS IN INSPECTION
     }
